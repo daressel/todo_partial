@@ -10,7 +10,7 @@ function App() {
   if (!localStorage.getItem('items')) localStorage.setItem('items', '[]')
   const [items, setItems] = useState(localStorage.getItem('items'))
   const [filter, setFilter] = useState('all')
-  const [sort, setSort] = useState(0)
+  const [sort, setSort] = useState(1)
   const [activePage, setActivePage] = useState(1)
   const [alertMessege, setAlertMessege] = useState('')
   const [itemsOnPage, setItemsOnPage] = useState([]);
@@ -26,19 +26,18 @@ function App() {
     else{
       updateFilteredItems = itemsParse.slice(0).reverse().filter(item => item.status === filter)
     }
-    if(sort){
-      updateFilteredItems.sort(() => sort)
-    }
+    updateFilteredItems.sort(() => sort)
     const countItems = updateFilteredItems.length
     
     setCountOfItems(countItems)
     const updateShowItems = updateFilteredItems.slice((activePage-1)*pageSize, (activePage)*pageSize)
     if(updateShowItems.length){
       setAlertMessege('')
+      
       setItemsOnPage(updateShowItems)
-    }else if(sort === -1){      
+    }else if(sort === -1){
       setActivePage(Math.ceil(countItems/pageSize))
-    }else if(updateShowItems.length === 0 && itemsParse.length){
+    }else if(updateShowItems.length === 0 && updateFilteredItems.length){
       setActivePage(Math.ceil((countItems - 1)/pageSize))
     }   
     else{
