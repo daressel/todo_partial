@@ -15,12 +15,12 @@ function App() {
   const [alertMessege, setAlertMessege] = useState('')
   const [filteredItems, setfilteredItems] = useState([]);
   const [itemsOnPage, setItemsOnPage] = useState([]);
-  const [countOfPages, setCountOfPages] = useState(0)
+  const [countOfItems, setCountOfItems] = useState(1)
   const [pageSize, setPageSize] = useState(5)
 
   useEffect(() => {
     let updateFilteredItems
-    const itemsParse = JSON.parse(items)
+    const itemsParse = JSON.parse(localStorage.getItem('items'))
     if(filter === 'all'){
       updateFilteredItems = itemsParse.slice(0).reverse()
     }
@@ -30,24 +30,24 @@ function App() {
     if(sort){
       updateFilteredItems.sort(() => sort)
     }
-    
-    // setCountOfPages(pagesCount)
-    setCountOfPages(updateFilteredItems.length)
-    
+    const countItems = updateFilteredItems.length
+    setCountOfItems(countItems)
     const updateShowItems = updateFilteredItems.slice((activePage-1)*pageSize, (activePage)*pageSize)
     if(updateShowItems.length){
       setAlertMessege('')
       setfilteredItems(updateFilteredItems)
       setItemsOnPage(updateShowItems)
-    }else if(activePage){
-      setActivePage(activePage - 1)
-    }else{
+    }else if(sort === -1){
+      if(updateShowItems.length === (pageSize)){
+        setActivePage(Math.ceil(countItems/pageSize))
+      }
+      setActivePage(Math.ceil(countItems/pageSize))
+    }    
+    else{
       setfilteredItems(updateFilteredItems)
       setAlertMessege("Items is empty ^_^")
       setItemsOnPage([])
     }
-     
-    localStorage.setItem('items', items)
 
   }, [items, activePage, filter, sort, pageSize])
   
@@ -67,27 +67,27 @@ function App() {
     if(!name.match(reg)){
       return 0
     }
-    const cashStorage = JSON.parse(items)
     const newItem = {
       id: uuid.v4(),
       name: name.trim(),
       status: "undone",
       createdAt: timeObj
     }
+    const allItems = JSON.parse(items)
+    allItems.push(newItem)
+    localStorage.setItem('items', JSON.stringify(allItems))
+    setItems(localStorage.getItem('items'))
     if(sort === -1){
       if(itemsOnPage.length === 5){
-        setActivePage(countOfPages)
+        setActivePage(countOfItems)
       }
       else{
-        setActivePage(countOfPages)
+        setActivePage(countOfItems)
       }
     }else{
       setActivePage(1)
-    }
-    
+    }    
     setFilter('all')
-
-    setItems(JSON.stringify([...cashStorage, newItem]))
   }
 
   // обработчик установки фильтра
@@ -103,20 +103,10 @@ function App() {
 
   // обработчик удаления item
   const handleDeleteItem = (id) => {
-    const updateStorageItems = JSON.parse(items).filter(item => item.id !== id)
-    setItems(JSON.stringify(updateStorageItems))
+    const updateStorageItems = JSON.parse(localStorage.getItem('items')).filter(item => item.id !== id)
+    localStorage.setItem('items', JSON.stringify(updateStorageItems))
+    setItems(localStorage.getItem('items'))
   }
-
-  //обработчик изменения item.name
-  const handleEditItem = (parName, parVal, id) => {
-    const updateStorageItems = JSON.parse(items)
-    const itemEditPar = updateStorageItems.find(item => item.id === id)
-    const itemIndex = updateStorageItems.findIndex(item => item.id === id)
-    itemEditPar[parName] = parVal
-    updateStorageItems[itemIndex] = itemEditPar
-    setItems(JSON.stringify(updateStorageItems))
-  }
-
   //обработчик установки страницы
   const handlePage = (number, pagesize) => {
     setActivePage(number)
@@ -141,13 +131,13 @@ function App() {
           />
         </Row>}
         <Row justify='center'>
-          <List items={itemsOnPage} handleDeleteItem = {handleDeleteItem} handleEditItem={handleEditItem}/>
+          <List items={itemsOnPage} handleDeleteItem = {handleDeleteItem}/>
         </Row>
         <Row justify='center'>
           <Pagination 
             style={{marginBottom: '50px'}}
             onChange={handlePage} 
-            total={countOfPages} 
+            total={countOfItems} 
             defaultCurrent={0}
             current={activePage}
             defaultPageSize={pageSize} 
