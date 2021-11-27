@@ -13,7 +13,6 @@ function App() {
   const [sort, setSort] = useState(0)
   const [activePage, setActivePage] = useState(1)
   const [alertMessege, setAlertMessege] = useState('')
-  const [filteredItems, setfilteredItems] = useState([]);
   const [itemsOnPage, setItemsOnPage] = useState([]);
   const [countOfItems, setCountOfItems] = useState(1)
   const [pageSize, setPageSize] = useState(5)
@@ -31,23 +30,22 @@ function App() {
       updateFilteredItems.sort(() => sort)
     }
     const countItems = updateFilteredItems.length
+    
     setCountOfItems(countItems)
     const updateShowItems = updateFilteredItems.slice((activePage-1)*pageSize, (activePage)*pageSize)
     if(updateShowItems.length){
       setAlertMessege('')
-      setfilteredItems(updateFilteredItems)
       setItemsOnPage(updateShowItems)
-    }else if(sort === -1){
-      if(updateShowItems.length === (pageSize)){
-        setActivePage(Math.ceil(countItems/pageSize))
-      }
+    }else if(sort === -1){      
       setActivePage(Math.ceil(countItems/pageSize))
-    }    
+    }else if(updateShowItems.length === 0 && itemsParse.length){
+      setActivePage(Math.ceil((countItems - 1)/pageSize))
+    }   
     else{
-      setfilteredItems(updateFilteredItems)
       setAlertMessege("Items is empty ^_^")
       setItemsOnPage([])
     }
+    window.scrollTo(0, 0);
 
   }, [items, activePage, filter, sort, pageSize])
   
@@ -111,7 +109,6 @@ function App() {
   const handlePage = (number, pagesize) => {
     setActivePage(number)
     setPageSize(pagesize)
-    setItemsOnPage(filteredItems.slice((number)*pagesize, (number+1)*pagesize))
   }
 
   return (

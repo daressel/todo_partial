@@ -36,7 +36,7 @@ const Item = ({item, handleDeleteItem}) => {
   }
 
   return (
-    <Row justify='center' className='item'>
+    <Row justify='center' className='item' gutter={[20, 0]}>
       <Col span={3} className='item-data'>
         <Checkbox
           checked={status === 'done' ? true : false}
@@ -45,6 +45,8 @@ const Item = ({item, handleDeleteItem}) => {
       </Col>
       <Col span={14} className='item-data'>
         <Typography.Text
+          className="item-name"
+          ellipsis={true}
           editable={{onChange: handleEditName}}
         >
           {name}
