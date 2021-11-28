@@ -2,22 +2,25 @@ import { Row, Button, Col, Typography } from "antd"
 
 export const SortFilterPanel = ({filter, sort, handleFilter, handleSort}) => {
   return(
-    <Row>
+    <Row gutter={[200, 200]}>
       <Col span={12}>
         <Row>
           <Button 
+            className='ant-btn-round'
             type={filter === 'all' ? 'primary' : 'default'} 
             onClick={() => handleFilter('all')}
           >
             All
           </Button>
-          <Button 
+          <Button
+            className='ant-btn-round'
             type={filter === 'done' ? 'primary' : 'default'} 
             onClick={() => handleFilter('done')}
           >
             Done
           </Button>
-          <Button 
+          <Button
+            className='ant-btn-round'
             type={filter === 'undone' ? 'primary' : 'default'} 
             onClick={() => handleFilter('undone')}
           >

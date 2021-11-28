@@ -13,8 +13,9 @@
   justify-content: center;
 }
 
-.items{
+.ant-col.items{
   margin: 10px 0;
+  min-height: 460px;
 }
 
 .ant-typography-edit-content.item-name{

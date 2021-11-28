@@ -28,22 +28,17 @@ function App() {
     }
     updateFilteredItems.sort(() => sort)
     const countItems = updateFilteredItems.length
-    
     setCountOfItems(countItems)
     const updateShowItems = updateFilteredItems.slice((activePage-1)*pageSize, (activePage)*pageSize)
     if(updateShowItems.length){
       setAlertMessege('')
-      
-      setItemsOnPage(updateShowItems)
     }else if(sort === -1){
       setActivePage(Math.ceil(countItems/pageSize))
     }else if(updateShowItems.length === 0 && updateFilteredItems.length){
       setActivePage(Math.ceil((countItems - 1)/pageSize))
-    }   
-    else{
-      setAlertMessege("Items is empty ^_^")
-      setItemsOnPage([])
     }
+    !updateShowItems.length ? setAlertMessege("Items is empty ^_^") : void(0)
+    setItemsOnPage(updateShowItems)
     window.scrollTo(0, 0);
 
   }, [items, activePage, filter, sort, pageSize])
